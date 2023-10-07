@@ -17,6 +17,7 @@
           tag = "v1";
           contents = [ self.packages.${system}.git
                        self.packages.${system}.cacert
+                       self.packages.${system}.pybind11
                        self.packages.${system}.catch2
                        self.packages.${system}.cmake
                        self.packages.${system}.gnumake
@@ -30,12 +31,13 @@
       packages.${system} = {
         # from cmdline,  can build member foo of packages.${system}:
         #   $ nix build .#foo
-        
+
         default = docker_builder_deriv;
         docker_builder = docker_builder_deriv;
 
         git = pkgs.git;
         cacert = pkgs.cacert;
+        pybind11 = pkgs.python311Packages.pybind11;
         catch2 = pkgs.catch2;
         cmake = pkgs.cmake;
         gnumake = pkgs.gnumake;
