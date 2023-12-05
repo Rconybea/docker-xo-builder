@@ -55,7 +55,7 @@
                        #self.packages.${system}.cacert
                        self.packages.${system}.pybind11
                        self.packages.${system}.python
-                       self.packages.${system}.libwebsockets
+                       (self.packages.${system}.lib.getDev self.packages.${system}.libwebsockets)
                        self.packages.${system}.catch2
                        self.packages.${system}.cmake
                        self.packages.${system}.gnumake
@@ -81,6 +81,7 @@
         # note: pybind11 doesn't pin a python dependency,
         #       presumably because doesn't know which python311 version we want
         python = pkgs.python311;
+        lib = pkgs.lib;
         libwebsockets = pkgs.libwebsockets;
         catch2 = pkgs.catch2;
         cmake = pkgs.cmake;
