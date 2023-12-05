@@ -55,6 +55,7 @@
                        self.packages.${system}.pybind11
                        self.packages.${system}.python
                        (self.packages.${system}.lib.getDev self.packages.${system}.libwebsockets)
+                       (self.packages.${system}.lib.getDev self.packages.${system}.jsoncpp)
                        self.packages.${system}.catch2
                        self.packages.${system}.cmake
                        self.packages.${system}.gnumake
@@ -82,6 +83,7 @@
         python = pkgs.python311;
         lib = pkgs.lib;
         libwebsockets = pkgs.libwebsockets;
+        jsoncpp = pkgs.jsoncpp;
         catch2 = pkgs.catch2;
         cmake = pkgs.cmake;
         gnumake = pkgs.gnumake;
