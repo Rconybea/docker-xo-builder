@@ -35,6 +35,7 @@
           name = "xo-shim";
           builder = "self.packages.${system}.bash}/bin/bash";
           args = [ ./xo-shim-builder.sh ];
+          nativeBuildInputs = [ pkgs.coreutils ];
         };
 
       docker_builder_deriv =
