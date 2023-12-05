@@ -1,3 +1,7 @@
+# To (re)build:
+#   $ cd ~/proj/docker-xo-builder   # this directory
+#   $ nix build
+
 {
   description = "docker xo/c++ builder (using nix)";
 
@@ -11,13 +15,43 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      env = pkgs.stdenv;
+
+      # 1. The purpose of this derivation is to let us put development packages in our docker image
+      #    (see docker_builder_deriv below).
+      #    if we write
+      #      docker_builder_deriv = pkgs.dockerTools.buildLayeredImage {
+      #        ...
+      #        contents = [ self.packages.${system}.libwebsockets ]
+      #        ...
+      #      };
+      #    then we get get libwebsockets.so,   but not the c++/cmake support libwebSockets-config.cmake etc.
+      #
+      # 2. Note that listing deps on docker image doesn't work because the the "development version"
+      #    of a package doesn't seem to have a well-known name (at least not one known to nix-env -qaP)
+      #
+      xo_shim_env_deriv =
+        pkgs.stdenv.mkDerivation {
+          name = "xo-shim";
+          builder = "self.packages.${system}.bash}/bin/bash";
+          args = [ ./xo-shim-builder.sh ];
+        };
 
       docker_builder_deriv =
         pkgs.dockerTools.buildLayeredImage {
           name = "docker-xo-builder";
           tag = "v1";
-          contents = [ self.packages.${system}.git
-                       self.packages.${system}.cacert
+          created = "now";    # warning: breaks deterministic output!
+          #copyToRoot = with pkgs.dockerTools;
+          #  [
+          #    usrBinEnv       # provide /usr/bin/env
+          #    binSh           # provide /bin/sh (really bashInteractive)
+          #    caCertificates  # provide /etc/ssl/certs/ca-certificates.crt
+          #    fakeNss         # provide /etc/passwd, /etc/group containing root + nobody
+          #  ];
+          contents = [ self.packages.${system}.xo_shim_env
+                       self.packages.${system}.git
+                       #self.packages.${system}.cacert
                        self.packages.${system}.pybind11
                        self.packages.${system}.python
                        self.packages.${system}.libwebsockets
@@ -27,6 +61,7 @@
                        self.packages.${system}.gcc
                        self.packages.${system}.binutils
                        self.packages.${system}.bash
+                       self.packages.${system}.tree
                        self.packages.${system}.coreutils ];
         };
 
@@ -36,6 +71,7 @@
         #   $ nix build .#foo
 
         default = docker_builder_deriv;
+        xo_shim_env = xo_shim_env_deriv;
         docker_builder = docker_builder_deriv;
 
         git = pkgs.git;
@@ -51,6 +87,7 @@
         gcc = pkgs.gcc;
         binutils = pkgs.binutils;
         bash = pkgs.bash;
+        tree = pkgs.tree;
         coreutils = pkgs.coreutils;
       };
     };
