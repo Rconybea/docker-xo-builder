@@ -1,3 +1,6 @@
-#!/bin/bash
+echo "xo-shim-builder.sh: enter"
+echo "out=${out}"
 
-2> echo "xo-shim-builder.sh: enter"
+mkdir -p ${out}/etc
+# just write something
+touch ${out}/etc/xo-shim-builder-done
