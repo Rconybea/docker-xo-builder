@@ -50,8 +50,7 @@
           #    caCertificates  # provide /etc/ssl/certs/ca-certificates.crt
           #    fakeNss         # provide /etc/passwd, /etc/group containing root + nobody
           #  ];
-          contents = [ self.packages.${system}.xo_shim_env
-                       self.packages.${system}.git
+          contents = [ self.packages.${system}.git
                        #self.packages.${system}.cacert
                        self.packages.${system}.pybind11
                        self.packages.${system}.python
