@@ -16,7 +16,10 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
       env = pkgs.stdenv;
+      lib = pkgs.lib;
 
+      # (not needed,  but keeping for reference)
+      #
       # 1. The purpose of this derivation is to let us put development packages in our docker image
       #    (see docker_builder_deriv below).
       #    if we write
@@ -54,8 +57,11 @@
                        #self.packages.${system}.cacert
                        self.packages.${system}.pybind11
                        self.packages.${system}.python
-                       (self.packages.${system}.lib.getDev self.packages.${system}.libwebsockets)
-                       (self.packages.${system}.lib.getDev self.packages.${system}.jsoncpp)
+                       (lib.getDev self.packages.${system}.libwebsockets)
+                       (lib.getDev self.packages.${system}.jsoncpp)
+                       #(self.packages.${system}.lib.getDev self.packages.${system}.libwebsockets)
+                       #(self.packages.${system}.lib.getDev self.packages.${system}.jsoncpp)
+                       self.packages.${system}.eigen
                        self.packages.${system}.catch2
                        self.packages.${system}.cmake
                        self.packages.${system}.gnumake
@@ -68,10 +74,12 @@
 
     in rec {
       packages.${system} = {
+
         # from cmdline,  can build member foo of packages.${system}:
         #   $ nix build .#foo
 
         default = docker_builder_deriv;
+
         xo_shim_env = xo_shim_env_deriv;
         docker_builder = docker_builder_deriv;
 
@@ -81,9 +89,10 @@
         # note: pybind11 doesn't pin a python dependency,
         #       presumably because doesn't know which python311 version we want
         python = pkgs.python311;
-        lib = pkgs.lib;
+        #lib = pkgs.lib;  # won't work;  pkgs.lib is not a derivation
         libwebsockets = pkgs.libwebsockets;
         jsoncpp = pkgs.jsoncpp;
+        eigen = pkgs.eigen;
         catch2 = pkgs.catch2;
         cmake = pkgs.cmake;
         gnumake = pkgs.gnumake;
