@@ -28,7 +28,7 @@
   catch2, cmake, gnumake, gcc,
 
   # base platform stuff
-  sedutil, gnugrep, findutils, binutils, bashInteractive, bash, coreutils, lib
+  gnused, gnugrep, findutils, binutils, bashInteractive, bash, coreutils, lib
 } :
 
 let
@@ -132,9 +132,9 @@ dockerTools.buildLayeredImage {
                pybind11
                python3
 
-               eigen
-               libwebsockets
-               jsoncpp
+               (lib.getDev eigen)
+               (lib.getDev libwebsockets)
+               (lib.getDev jsoncpp)
 
                gnutar
                gzip
@@ -144,6 +144,7 @@ dockerTools.buildLayeredImage {
                gnumake
                gcc
 
+               gnused
                gnugrep
                findutils
                binutils
