@@ -28,7 +28,7 @@
   catch2, cmake, gnumake, gcc,
 
   # base platform stuff
-  gnugrep, findutils, binutils, bashInteractive, bash, coreutils, lib
+  sedutil, gnugrep, findutils, binutils, bashInteractive, bash, coreutils, lib
 } :
 
 let

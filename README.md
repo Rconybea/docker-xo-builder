@@ -40,6 +40,9 @@ $ echo $CR_PAT | docker login ghcr.io -u rconybea --password-stdin
 Login Succeeded
 ```
 
+Docker keeps secret in `~/.docker/config.json`,  so don't need to remember token separately
+unless want to use for something besides docker.
+
 3.
 tag image the way github expects,  i.e. format ghcr.io/${username}/${imagename}:${tag}
 (tag should match `outputs.docker_builder_deriv.tag` in `flake.nix`)
@@ -67,4 +70,15 @@ for example workflow using this image, see [https://github.com/rconybea/docker-a
 To test container locally:
 ```
 docker run -i docker-xo-builder:v1 bash
+```
+
+# miscellaneous commands
+
+list available docker images
+
+```
+$ docker image ls
+REPOSITORY                            TAG       IMAGE ID       CREATED         SIZE
+docker-xo-builder                     v1        ce3fdf8fa87f   5 minutes ago   750MB
+...
 ```
