@@ -16,7 +16,7 @@
   git, openssh, curl, wget, cacert,
 
   # xo py deps
-  pybind11, python3Packages, python3,
+  pybind11,
 
   # xo deps
   eigen, libwebsockets, jsoncpp,
@@ -24,8 +24,15 @@
   # archives
   gnutar, gzip,
 
+  # python toolchain
+  python3Packages,
+  python3,
+  sphinx ? python3Packages.sphinx,
+  sphinx-rtd-theme ? python3Packages.sphinx-rtd-theme,
+  breathe ? python3Packages.breathe,
+
   # c++ toolchain
-  catch2, cmake, gnumake, gcc,
+  catch2, cmake, gnumake, gcc, doxygen, graphviz,
 
   # base platform stuff
   gnused, gnugrep, findutils, binutils, bashInteractive, bash, coreutils, lib
@@ -33,7 +40,7 @@
 
 let
   users = {
-    # root user.  
+    # root user.
     root = {
       uid = 0;
       gid = 0;
@@ -51,7 +58,7 @@ let
     root.gid = 0;
     #nixbld.gid = 30000;
     #nobody.gid = 65534;
-  };    
+  };
 
   # convert from user struct to row in /etc/passwd
   user2passwd = (key: { uid, gid, home, description, shell, groups}: "${key}:x:${toString uid}:${toString gid}:${description}:${home}:${shell}");
@@ -100,7 +107,7 @@ let
   # group2group :: gname -> gid -> groupline
   #
   # e.g. "nixbld" -> 30000 -> "nixbld:x:30000:nixbld1,nixbld2"
-  # 
+  #
   group2group =
     (key : { gid }:
       let
@@ -112,7 +119,7 @@ let
 
   # contents of /etc/group
   group = (lib.concatStringsSep "\n" (lib.attrValues (lib.mapAttrs group2group groups)));
-  
+
 in
 
 dockerTools.buildLayeredImage {
@@ -120,6 +127,9 @@ dockerTools.buildLayeredImage {
   tag = "v1";
   created = "now";   # warning: breaks deterministic output!
 
+  # use (lib.getDev foo) on a library package foo
+  # to request developer support,  for example .cmake files
+  #
   contents = [ tree
                which
 
@@ -129,8 +139,15 @@ dockerTools.buildLayeredImage {
                wget
                cacert
 
-               pybind11
+               sphinx
+               sphinx-rtd-theme
+               breathe
+
+               (lib.getDev pybind11)
                python3
+
+               doxygen
+               graphviz
 
                (lib.getDev eigen)
                (lib.getDev libwebsockets)
@@ -144,7 +161,7 @@ dockerTools.buildLayeredImage {
                gnumake
                gcc
 
-               gnused
+               #gnused
                gnugrep
                findutils
                binutils
@@ -184,5 +201,5 @@ dockerTools.buildLayeredImage {
     Cmd = [ "/bin/bash" ];
     Env = [ "SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt" ];
   };
-  
+
 }

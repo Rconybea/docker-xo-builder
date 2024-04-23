@@ -9,7 +9,7 @@
 1.
 ```
 $ cd ~/proj/docker-xo-builder  # directory containing this file
-$ nix build
+$ nix build -L --print-build-logs .#docker-xo-builder
 ```
 
 2.

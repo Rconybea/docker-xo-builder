@@ -33,7 +33,6 @@
               packages.docker-xo-builder = appliedOverlay.docker-xo-builder;
 
               packages.default = appliedOverlay.default;
-
             };
 
       in
